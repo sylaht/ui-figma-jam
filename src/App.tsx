@@ -1,13 +1,19 @@
-import ReactFlow, { addEdge, Background, Connection, ConnectionMode, Controls, Node, useEdgesState } from 'reactflow';
+import ReactFlow, { addEdge, Background, Connection, ConnectionMode, Controls, Node, useEdgesState, useNodesState } from 'reactflow';
+import * as Toolbar from '@radix-ui/react-toolbar'
 import { zinc } from 'tailwindcss/colors'
 import 'reactflow/dist/style.css';
 import { Square } from './components/nodes/Square';
 import { useCallback } from 'react';
+import DefaultEdge from './components/edges/DefaultEdge';
 
 // Nodes, Edges
 
 const NODE_TYPES = {
   square: Square,
+}
+
+const EDGE_TYPES ={
+  default: DefaultEdge
 }
 
 const INITIAL_NODES = [
@@ -34,6 +40,7 @@ const INITIAL_NODES = [
 
 function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES)
 
   const onConnect = useCallback((connection: Connection ) => {
     return setEdges(edges => addEdge(connection, edges))
@@ -43,11 +50,16 @@ function App() {
     <div className='w-screen h-screen'>
       <ReactFlow
         nodeTypes={NODE_TYPES}
-        nodes={INITIAL_NODES}
+        edgeTypes={EDGE_TYPES}
+        nodes={nodes}
         edges={edges}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodesChange={onNodesChange}
         connectionMode={ConnectionMode.Loose}
+        defaultEdgeOptions={{
+          type: 'default'
+        }}
       >
         <Background
           gap={12}
@@ -55,7 +67,12 @@ function App() {
           color={zinc[400]}
         />
         <Controls />
-      </ReactFlow>
+          </ReactFlow>
+        <Toolbar.Root className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg border border-zinc-300 px-8 h-20 w-96 overflow-hidden'>
+          <Toolbar.Button 
+          className="w-32 h-32 bg-violet-500 mt-6 rounded hover:-translate-y-2 transition-transform"
+          />
+        </Toolbar.Root>
     </div>
   )
 }
