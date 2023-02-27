@@ -12,7 +12,7 @@ const NODE_TYPES = {
   square: Square,
 }
 
-const EDGE_TYPES ={
+const EDGE_TYPES = {
   default: DefaultEdge
 }
 
@@ -42,9 +42,24 @@ function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES)
 
-  const onConnect = useCallback((connection: Connection ) => {
+  const onConnect = useCallback((connection: Connection) => {
     return setEdges(edges => addEdge(connection, edges))
   }, [])
+
+  function addSquareNode() {
+    setNodes(nodes => [
+      ...nodes,
+      {
+        id: crypto.randomUUID(),
+        type: 'square',
+        position: {
+          x: 750,
+          y: 350,
+        },
+        data: {},
+      },
+    ])
+  }
 
   return (
     <div className='w-screen h-screen'>
@@ -67,12 +82,13 @@ function App() {
           color={zinc[400]}
         />
         <Controls />
-          </ReactFlow>
-        <Toolbar.Root className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg border border-zinc-300 px-8 h-20 w-96 overflow-hidden'>
-          <Toolbar.Button 
+      </ReactFlow>
+      <Toolbar.Root className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg border border-zinc-300 px-8 h-20 w-96 overflow-hidden'>
+        <Toolbar.Button
+          onClick={addSquareNode}
           className="w-32 h-32 bg-violet-500 mt-6 rounded hover:-translate-y-2 transition-transform"
-          />
-        </Toolbar.Root>
+        />
+      </Toolbar.Root>
     </div>
   )
 }
